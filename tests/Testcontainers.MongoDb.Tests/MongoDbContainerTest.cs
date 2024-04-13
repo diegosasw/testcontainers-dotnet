@@ -75,6 +75,15 @@ public abstract class MongoDbContainerTest : IAsyncLifetime
         {
         }
     }
+    
+    [UsedImplicitly]
+    public sealed class MongoDbV7Configuration : MongoDbContainerTest
+    {
+        public MongoDbV7Configuration()
+            : base(new MongoDbBuilder().WithImage("mongo:7.0").Build())
+        {
+        }
+    }
 
     [UsedImplicitly]
     public sealed class MongoDbV4Configuration : MongoDbContainerTest

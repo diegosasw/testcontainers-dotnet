@@ -60,6 +60,11 @@ public sealed class MongoDbBuilder : ContainerBuilder<MongoDbBuilder, MongoDbCon
             .WithEnvironment("MONGO_INITDB_ROOT_PASSWORD", initDbRootPassword);
     }
 
+    public MongoDbBuilder WithReplicaSet(string replicaSetName = "rs0")
+    {
+        return Clone(new ContainerConfiguration(command: ["mongod", "--replSet", replicaSetName]));
+    }
+
     /// <inheritdoc />
     public override MongoDbContainer Build()
     {
@@ -76,6 +81,7 @@ public sealed class MongoDbBuilder : ContainerBuilder<MongoDbBuilder, MongoDbCon
     protected override MongoDbBuilder Init()
     {
         return base.Init()
+            .WithCommand()
             .WithImage(MongoDbImage)
             .WithPortBinding(MongoDbPort, true)
             .WithUsername(DefaultUsername)
