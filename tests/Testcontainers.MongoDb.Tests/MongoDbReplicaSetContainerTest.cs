@@ -3,8 +3,9 @@
 public class MongoDbReplicaSetContainerTest
 {
         [Fact]
-        public async Task Foo()
+        public async Task ReplicaSetIsAccessibleWithReplicaSetConnectionString()
         {
+                // Given
                 const string replicaSetName = "rs0";
                 const string hostname = "mongo";
                 
@@ -32,9 +33,15 @@ public class MongoDbReplicaSetContainerTest
                         initiateCommand
                 };
                 
-                var result = await mongoDbContainer.ExecAsync(command);
+                await mongoDbContainer.ExecAsync(command);
                 var connectionString = $"mongodb://{hostname}:{port}/?replicaSet={replicaSetName}";
                 
-                // This connection string works!
+                var client = new MongoClient(connectionString);
+
+                // When
+                using var databases = await client.ListDatabasesAsync();
+
+                // Then
+                Assert.Contains(databases.ToEnumerable(), database => database.TryGetValue("name", out var name) && "admin".Equals(name.AsString));
         }
 }
